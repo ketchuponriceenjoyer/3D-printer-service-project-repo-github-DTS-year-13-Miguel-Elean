@@ -1,0 +1,38 @@
+
+{% extends "Base.html" %}
+
+{% block main %}
+
+    <br>
+    <br>
+
+    <form class="myform" method="post" enctype="multipart/form-data">
+        <div class="sessionbox">
+
+            <div class="form-label"> choose a filament </div>
+                    <div class = "form-element ">
+                        <select name = "Filament" >
+                            <option filament="PLA">PLA</option>
+                            <option filament="ABS">ABS</option>
+                            <option filament="PETG">PETG</option>
+                            <option filament="TPU">TPU</option>
+                            <option filament="Nylon">Nylon</option>
+                        </select>
+                    </div>
+
+            <div class="form-label"> Enter size </div>
+            <div class = "form-element "> <input type="text" name = "Size" required ></div>
+
+            <div class="form-label"> Enter fbx </div>
+            <div class="form-label"> Upload Model File </div>
+            <div class="form-element"> <input type="file" name="Model_File" required> </div>
+
+
+
+            <br>
+            <br>
+            <input type="submit" value= "Upload">
+
+        </div>
+
+{% endblock %}

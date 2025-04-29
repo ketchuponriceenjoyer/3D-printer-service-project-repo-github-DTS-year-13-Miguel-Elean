@@ -1,0 +1,42 @@
+
+
+body {
+    background-color: rgb(255, 230, 0);
+}
+
+.container {
+    width: 60vw;
+    margin: auto;
+    background-color: rgb(30, 129, 236);
+    color: rgb(0, 0, 0);
+}
+
+nav {
+    background-color: rgba(44, 62, 80, 1.0); /* darkest blue */
+    text-align: center;
+    /*color: rgba(52, 152, 219, 1.0);!*light blue*!*/
+    font-size: 1.5rem;
+    padding-top: 0.4rem;
+    padding-bottom: 0.7rem;
+    color: rgba(52, 152, 219, 1.0); /*light blue*/
+}
+
+
+.sessionbox {
+    background-color: rgb(255, 255, 255);
+    width: 200px;
+    border: 5px solid #000000;
+    padding: 50px;
+    margin: auto;
+}
+
+.model_container {
+    text-align: center;
+    width: 100px;
+    length: 300px;
+    background-color: rgb(255, 255, 255);
+    border: 15px solid #000000;
+}
+div {
+    text-align: center;
+}

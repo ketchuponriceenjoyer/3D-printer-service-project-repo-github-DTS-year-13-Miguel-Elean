@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.css"/>
+        <link href="{{ url_for('static', filename='css.css') }}" rel="stylesheet">
+    </head>
+
+    <body>
+        <nav>
+            <div class = 'container'>
+                <p> testingg uwhfwjfsjhfb jfhfbsdkhfsdjhf</p>
+            </div>
+        </nav>
+
+        <nav>
+            <div>
+                <p>Session Page</p>
+            </div>
+            <div class="navbar-links">
+                <a href="/Session">Sessions</a>
+                <a href="/images">Images</a>
+                <a href="/">Home</a>
+                <a href="/Login">Login</a>
+                <a href="/Signin">Sign in</a>
+            </div>
+        </nav>
+
+        <main>
+            {% block main %}
+            {% endblock %}
+        </main>
+    </body>
+</html>

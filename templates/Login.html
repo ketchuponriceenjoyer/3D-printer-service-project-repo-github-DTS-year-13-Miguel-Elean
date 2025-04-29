@@ -1,0 +1,16 @@
+{% extends "Base.html" %}
+{% block main %}
+    <body>
+        <form class="myform" method="post">
+            <div class="sessionbox">
+                <div class="form-label"> Enter Name </div>
+                <div class="form-element"> <input type="text" name="Name" required ></div>
+
+                <div class="form-label"> Enter Address </div>
+                <div class="form-element"> <input type="text" name="Address" required ></div>
+
+                <div class="form-label"> Enter Email </div>
+                <div class="form-element"> <input type="text" name="Email" required ></div>
+                <input type="submit" value="Upload">
+    </body>
+{% endblock %}

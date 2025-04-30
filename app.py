@@ -43,10 +43,13 @@ def render_Sessionpage():
         # only grabs the name of the file and puts it in the database as a seperate colomun for file names
         con = connect_database(DATABASE)
         cur = con.cursor()
-        query_insert = "INSERT INTO session (Filament, size, model, filename) VALUES (?, ?, ?, ?)"
+        query_insert = "INSERT INTO session (filament, size, file_data, File_name) VALUES (?, ?, ?, ?)"
         cur.execute(query_insert, (Filament, Size, file_data, Model.filename))
         con.commit()
         con.close()
+        print(session)
+
+
 
     return render_template('Session.html')
 
@@ -92,6 +95,8 @@ def render_loginpage():
         session['user_id'] = user_id
         session['username'] = username
         print(session)
+        print("log in successful")
+        print("logged in as ", session['username'])
 
         return redirect("/")
 
@@ -121,7 +126,7 @@ def render_signinpage():
         cur.execute(query_insert, (Name, Address, Email, hashed_password))
         con.commit()
         con.close()
-
+        return redirect("/Login")
     return render_template('signin.html')
 
 

@@ -27,6 +27,14 @@ def connect_database(db_file):
 def render_homepage():
     return render_template('Home.html')
 
+@app.route('/Base')
+def render_basepage():
+    username = session.get("username")
+    email = session.get("email")
+    print(username, email)
+    return render_template('Base.html', usernamedisplay = username)
+
+
 @app.route('/Session', methods=['POST', 'GET'])
 def render_Sessionpage():
     if request.method == 'POST':

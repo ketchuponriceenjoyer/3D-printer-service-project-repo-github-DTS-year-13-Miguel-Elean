@@ -8,11 +8,6 @@
 
     <body>
         <nav>
-            {% for variable in usernamedisplay %}
-                <div>{{ variable }}</div>
-            {% endfor %}
-        </nav>
-        <nav>
             <div class = 'container'>
                 <p> testingg uwhfwjfsjhfb jfhfbsdkhfsdjhf</p>
             </div>
@@ -21,6 +16,10 @@
         <nav>
             <div>
                 <p>Session Page</p>
+                <p>
+                    <div> username: {{ user }}</div>
+                    <div> email: {{ email }}</div>
+                </p>
             </div>
             <div class="navbar-links">
                 <a href="/Session">Sessions</a>

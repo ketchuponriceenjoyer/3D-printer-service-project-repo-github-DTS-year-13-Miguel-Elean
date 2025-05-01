@@ -27,16 +27,16 @@ def connect_database(db_file):
 def render_homepage():
     return render_template('Home.html')
 
-@app.route('/Base')
-def render_basepage():
+def user_profile_display():
     username = session.get("username")
     email = session.get("email")
-    print(username, email)
-    return render_template('Base.html', usernamedisplay = username)
+    return (username, email)
 
 
 @app.route('/Session', methods=['POST', 'GET'])
 def render_Sessionpage():
+    user, email = user_profile_display()
+
     if request.method == 'POST':
         #grabs submitted information from the html
 
@@ -62,7 +62,7 @@ def render_Sessionpage():
         con.commit()
         con.close()
 
-    return render_template('Session.html')
+    return render_template('Session.html', user = user, email = email)
 
 
 
@@ -72,6 +72,7 @@ def render_imagespage():
     return render_template('images.html')
 @app.route('/Login', methods=['POST', 'GET'])
 def render_loginpage():
+    user, email = user_profile_display()
     if request.method == 'POST':
         #grabs information submitted
         Name = request.form.get('Name')
@@ -113,10 +114,11 @@ def render_loginpage():
 
         return redirect("/")
 
-    return render_template('Login.html')
+    return render_template('Login.html', user = user, email = email)
 
 @app.route('/Signin', methods=['POST', 'GET'])
 def render_signinpage():
+    user, email = user_profile_display()
     if request.method == 'POST':
         #gets information submitted
         Name = request.form.get('Name')
@@ -140,7 +142,7 @@ def render_signinpage():
         con.commit()
         con.close()
         return redirect("/Login")
-    return render_template('signin.html')
+    return render_template('signin.html', user = user, email = email)
 
 
 

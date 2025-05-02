@@ -67,7 +67,7 @@ def render_Sessionpage():
         cur.execute(query_insert, (Filament, Size, file_data, Model.filename, user_id))
         con.commit()
         con.close()
-
+        return render_template('Session.html', )
     return render_template('Session.html', user = user, email = email)
 
 
@@ -76,6 +76,20 @@ def render_Sessionpage():
 def render_imagespage():
     #image gallery coming soon
     return render_template('images.html')
+
+
+
+
+
+def find_account(email):
+    check_query = "SELECT user_id, username, password , email FROM users WHERE email = ?"
+    con = connect_database(DATABASE)
+    cur = con.cursor()
+    cur.execute(check_query, (email,))
+    user_info = cur.fetchone()
+    cur.close()
+    return user_info
+
 @app.route('/Login', methods=['POST', 'GET'])
 def render_loginpage():
     user, email = user_profile_display()
@@ -87,30 +101,31 @@ def render_loginpage():
 
         #selects the user id username and password from the specific email to only grab one user
 
-        check_query = "SELECT user_id, username, password FROM users WHERE email = ?"
-        con = connect_database(DATABASE)
-        cur = con.cursor()
-        cur.execute(check_query, (email,))
-        user_info = cur.fetchone() 
-        cur.close()
+        user_info = find_account(email)
         # code that does the security check
-        print(user_info)
         try:
-            #gets the user information from the check query
+            #gets the user information from the check query and puts them in separate variables
             user_id = user_info[0]
             username = user_info[1]
             user_password = user_info[2]
 
-        except IndexError:
-            #if check doesnt work print this out
-            print("index error")
-            error = "index error"
-            return render_template('Login.html', error=error)
+            #error activates if try cannot get information from user id indicating the gmail wasn't found
+        except TypeError:
+            return render_template('signin.html', error="account doesnt exist")
+
+            # checks if username and passwords match if not prints out error message
+        if not user_info[1] == Name and not bcrypt.check_password_hash(user_password, password):
+            return render_template('Login.html', error="passwords and username do not match")
+
+            # checks if username match if not prints out error message
+        if not user_info[1] == Name:
+            return render_template('Login.html', error="username do not match")
+
+            # checks if passwords match if not prints out error message
         if not bcrypt.check_password_hash(user_password, password):
-            #checks password submitted and password in the database matches
-            print("passwords do not match")
-            error = "passwords do not match"
-            return render_template('Login.html', error=error)
+            return render_template('Login.html', error="passwords do not match")
+
+
 
 
         # holds the user information in the website while user is logged in
@@ -127,7 +142,7 @@ def render_loginpage():
 
 @app.route('/Signin', methods=['POST', 'GET'])
 def render_signinpage():
-    user, email = user_profile_display()
+    user, email_display = user_profile_display()
     if request.method == 'POST':
         #gets information submitted
         Name = request.form.get('Name')
@@ -135,14 +150,36 @@ def render_signinpage():
         Email = request.form.get('Email')
         password = request.form.get('Password')
         re_Password = request.form.get('Re_Password')
+        check_query = "SELECT username FROM users"
+        con = connect_database(DATABASE)
+        cur = con.cursor()
+        cur.execute(check_query)
+        user_name_account = cur.fetchall()
+        cur.close()
+        print(user_name_account)
+        username_list = []
+        for x in user_name_account:
+            username_list.append(x[0])
+
+        if Name in username_list:
+            return render_template('signin.html', error="username already in use")
+
+        user_info = find_account(Email)
+        try:
+            if user_info[3] == Email:
+                return render_template('Login.html', error="Email address already in use", link="/signin")
+        except TypeError:
+            pass
+
+
 
         #converts password submitted into bcrypt layout for better security purposes
         hashed_password = bcrypt.generate_password_hash(password)
         #checks if password is 8 digits long and re password matches password
         if password != re_Password:
-            return redirect("/Signin?error=password+invalid")
+            return render_template('signin.html', error="passwords do not match")
         if len(password) < 8:
-            return redirect("/Signin?error=password+invalid")
+            return render_template('signin.html', error="passwords to short")
         #grabs submitted information and place it into the database
         con = connect_database(DATABASE)
         cur = con.cursor()
@@ -151,7 +188,7 @@ def render_signinpage():
         con.commit()
         con.close()
         return redirect("/Login")
-    return render_template('signin.html', user = user, email = email)
+    return render_template('signin.html', user = user, email = email_display)
 
 
 

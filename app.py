@@ -34,7 +34,7 @@ def user_profile_display():
 
 
 
-@app.route('/logout', methods=['POST', 'GET'])
+@app.route('/logout')
 def logout():
     session.clear()
     print(session)
@@ -104,11 +104,14 @@ def render_loginpage():
         except IndexError:
             #if check doesnt work print this out
             print("index error")
-            return redirect("/Login?error=email+or+password+invalid")
+            error = "index error"
+            return render_template('Login.html', error=error)
         if not bcrypt.check_password_hash(user_password, password):
             #checks password submitted and password in the database matches
             print("passwords do not match")
-            return redirect("/Login?error=email+or+password+invalid")
+            error = "passwords do not match"
+            return render_template('Login.html', error=error)
+
 
         # holds the user information in the website while user is logged in
         session['email'] = email

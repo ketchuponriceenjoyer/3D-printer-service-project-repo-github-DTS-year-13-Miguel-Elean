@@ -33,10 +33,16 @@ def user_profile_display():
     return (username, email)
 
 
+
+@app.route('/logout', methods=['POST', 'GET'])
+def logout():
+    session.clear()
+    print(session)
+    return redirect("/")
+
 @app.route('/Session', methods=['POST', 'GET'])
 def render_Sessionpage():
     user, email = user_profile_display()
-
     if request.method == 'POST':
         #grabs submitted information from the html
 

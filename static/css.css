@@ -40,3 +40,11 @@ nav {
 div {
     text-align: center;
 }
+
+div.b {
+  position: absolute;
+  right: 150px;
+  width: 300px;
+  height: 80px;
+  border: 3px solid blue;
+}

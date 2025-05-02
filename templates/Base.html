@@ -6,21 +6,22 @@
         <link href="{{ url_for('static', filename='css.css') }}" rel="stylesheet">
     </head>
 
+
     <body>
         <nav>
-            <div class = 'container'>
-                <p> testingg uwhfwjfsjhfb jfhfbsdkhfsdjhf</p>
+            <div class="b">
+                <div> username: {{ user }}</div>
+                <div> email: {{ email }}</div>
+                <a href="/logout">logout</a>
             </div>
-        </nav>
 
-        <nav>
+
+
+
             <div>
                 <p>Session Page</p>
-                <p>
-                    <div> username: {{ user }}</div>
-                    <div> email: {{ email }}</div>
-                </p>
             </div>
+
             <div class="navbar-links">
                 <a href="/Session">Sessions</a>
                 <a href="/images">Images</a>

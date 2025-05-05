@@ -15,19 +15,18 @@
                 <a href="/logout">logout</a>
             </div>
 
-
-
-
             <div>
                 <p>Session Page</p>
             </div>
 
             <div class="navbar-links">
                 <a href="/Session">Sessions</a>
-                <a href="/images">Images</a>
                 <a href="/">Home</a>
                 <a href="/Login">Login</a>
                 <a href="/Signin">Sign in</a>
+                {% if admin %}
+                    <a href="/Admin">Admin</a>
+                {% endif %}
             </div>
         </nav>
 

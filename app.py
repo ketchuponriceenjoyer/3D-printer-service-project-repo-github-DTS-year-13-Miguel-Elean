@@ -30,9 +30,8 @@ def render_homepage():
 def user_profile_display():
     username = session.get("username")
     email = session.get("email")
-    return (username, email)
-
-
+    admin = session.get("admin")
+    return (username, email, admin)
 
 @app.route('/logout')
 def logout():
@@ -42,7 +41,7 @@ def logout():
 
 @app.route('/Session', methods=['POST', 'GET'])
 def render_Sessionpage():
-    user, email = user_profile_display()
+    user, email, admin = user_profile_display()
     if request.method == 'POST':
         #grabs submitted information from the html
 
@@ -67,18 +66,22 @@ def render_Sessionpage():
         cur.execute(query_insert, (Filament, Size, file_data, Model.filename, user_id))
         con.commit()
         con.close()
-        return render_template('Session.html', )
-    return render_template('Session.html', user = user, email = email)
+
+    return render_template('Session.html', user = user, email = email, admin = admin)
 
 
 
-@app.route('/images')
-def render_imagespage():
-    #image gallery coming soon
-    return render_template('images.html')
 
 
-
+def check_admin(email):
+    check_query = "SELECT Admin FROM users WHERE email = ?"
+    con = connect_database(DATABASE)
+    cur = con.cursor()
+    cur.execute(check_query, (email,))
+    admin_info = cur.fetchone()
+    cur.close()
+    admin_ = admin_info[0]
+    return admin_
 
 
 def find_account(email):
@@ -92,7 +95,7 @@ def find_account(email):
 
 @app.route('/Login', methods=['POST', 'GET'])
 def render_loginpage():
-    user, email = user_profile_display()
+    user, email, is_admin = user_profile_display()
     if request.method == 'POST':
         #grabs information submitted
         Name = request.form.get('Name')
@@ -124,25 +127,26 @@ def render_loginpage():
             # checks if passwords match if not prints out error message
         if not bcrypt.check_password_hash(user_password, password):
             return render_template('Login.html', error="passwords do not match")
-
-
-
-
         # holds the user information in the website while user is logged in
         session['email'] = email
         session['user_id'] = user_id
         session['username'] = username
-        print(session)
+
         print("log in successful")
         print("logged in as ", session['username'])
-
+        admin_var = check_admin(email)
+        if admin_var == True:
+            session['admin'] = True
+        else:
+            session['admin'] = False
+        print(session)
         return redirect("/")
 
-    return render_template('Login.html', user = user, email = email)
+    return render_template('Login.html', user = user, email = email, admin=is_admin)
 
 @app.route('/Signin', methods=['POST', 'GET'])
 def render_signinpage():
-    user, email_display = user_profile_display()
+    user, email_display, is_admin = user_profile_display()
     if request.method == 'POST':
         #gets information submitted
         Name = request.form.get('Name')
@@ -188,9 +192,19 @@ def render_signinpage():
         con.commit()
         con.close()
         return redirect("/Login")
-    return render_template('signin.html', user = user, email = email_display)
+    return render_template('signin.html', user = user, email = email_display, admin=is_admin)
 
+@app.route('/Admin',)
+def render_Adminpage():
 
+    con = connect_database(DATABASE)
+    cur = con.cursor()
+    query = "SELECT users.username, users.address, users.email, session.filament, session.size, session.file_name FROM session JOIN users ON session.fk_user_id = users.user_id"
+    cur.execute(query)
+    sessions = cur.fetchall()
+    cur.close()
+
+    return render_template('Admin.html', sessions=sessions)
 
 if __name__ == '__main__':
     app.run()

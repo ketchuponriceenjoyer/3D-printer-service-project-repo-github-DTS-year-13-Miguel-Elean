@@ -1,0 +1,31 @@
+{% extends "Base.html" %}
+
+{% block main %}
+
+    <body>
+            <h1>Session Table</h1>
+                <table>
+                    <tr>
+                        <th>username</th>
+                        <th>address</th>
+                        <th>email</th>
+                        <th>Filament</th>
+                        <th>size</th>
+                        <th>filename</th>
+                    </tr>
+                    {% for session in sessions %}
+                        <tr>
+                            <td>{{ session[0] }}</td>  <!-- filament -->
+                            <td>{{ session[1] }}</td>  <!-- size -->
+                            <td>{{ session[2] }}</td>  <!-- file_name -->
+                            <td>{{ session[3] }}</td>
+                            <td>{{ session[4] }}</td>
+                            <td>{{ session[5] }}</td>
+                            <!-- username -->
+                        </tr>
+                    {% endfor %}
+                </table>
+    </body>
+
+
+{% endblock %}

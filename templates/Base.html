@@ -20,11 +20,13 @@
             </div>
 
             <div class="navbar-links">
-                <a href="/Session">Sessions</a>
+                {% if logged_in == True %}
+                    <a href="/Session">Sessions</a>
+                {% endif %}
                 <a href="/">Home</a>
                 <a href="/Login">Login</a>
                 <a href="/Signin">Sign in</a>
-                {% if admin %}
+                {% if admin == True %}
                     <a href="/Admin">Admin</a>
                 {% endif %}
             </div>

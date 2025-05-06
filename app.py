@@ -10,6 +10,8 @@ app.secret_key = "testingkey"
 #connects database to python into a variable
 DATABASE = 'database'
 
+
+
 def connect_database(db_file):
     """
     Connects to the database and sends error message if database cannot be connected for some reason
@@ -23,9 +25,12 @@ def connect_database(db_file):
         print(e)
         print(f'an error when connecting to database')
     return
+
+
 @app.route('/')
 def render_homepage():
     return render_template('Home.html')
+
 
 def user_profile_display():
     username = session.get("username")
@@ -35,8 +40,12 @@ def user_profile_display():
 
 @app.route('/logout')
 def logout():
-    session.clear()
-    print(session)
+    session.pop('user_id', None)
+    session.pop('username', None)
+    session.pop('email', None)
+    session.pop('admin', None)
+    session['logged_in'] = False
+
     return redirect("/")
 
 @app.route('/Session', methods=['POST', 'GET'])
@@ -128,6 +137,7 @@ def render_loginpage():
         session['email'] = email
         session['user_id'] = user_id
         session['username'] = username
+        session['logged_in'] = True
 
         print("log in successful")
         print("logged in as ", session['username'])
@@ -136,10 +146,10 @@ def render_loginpage():
             session['admin'] = True
         else:
             session['admin'] = False
-        print(session)
+
         return redirect("/")
 
-    return render_template('Login.html', user = user, email = email, admin=is_admin)
+    return render_template('Login.html', user = user, email = email, admin=is_admin, logged_in=session.get('logged_in'))
 
 @app.route('/Signin', methods=['POST', 'GET'])
 def render_signinpage():
@@ -189,7 +199,7 @@ def render_signinpage():
         con.commit()
         con.close()
         return redirect("/Login")
-    return render_template('signin.html', user = user, email = email_display, admin=is_admin)
+    return render_template('signin.html', user = user, email = email_display, admin=is_admin, logged_in=session.get('logged_in'))
 
 @app.route('/Admin', methods=['POST', 'GET'])
 def render_Adminpage():
@@ -208,7 +218,7 @@ def render_Adminpage():
         con.commit()
         cur.close()
 
-    return render_template('Admin.html', sessions=sessions)
+    return render_template('Admin.html', sessions=sessions, logged_in=session.get('logged_in'))
 
 if __name__ == '__main__':
     app.run()

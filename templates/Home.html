@@ -15,8 +15,22 @@
             <div>
                 <p> HOME PAGE</p>
             </div>
+
+
             <div class="navbar-links">
-                <a href="/Signin">Sign In</a>
+                {% if logged_in == True %}
+                    <a href="/Session">Sessions</a>
+                {% endif %}
+                {% if admin == True %}
+                        <a href="/Admin">Admin</a>
+                    {% endif %}
+                {% if logged_in == False %}
+                    <a href="/Login">Login</a>
+                    <a href="/Signin">Sign in</a>
+                {% endif %}
+
+
+
             </div>
         </nav>
     </body>

@@ -23,9 +23,14 @@
                 {% if logged_in == True %}
                     <a href="/Session">Sessions</a>
                 {% endif %}
+
+                {% if logged_in == False %}
+                    <a href="/Login">Login</a>
+                    <a href="/Signin">Sign in</a>
+                {% endif %}
+
                 <a href="/">Home</a>
-                <a href="/Login">Login</a>
-                <a href="/Signin">Sign in</a>
+
                 {% if admin == True %}
                     <a href="/Admin">Admin</a>
                 {% endif %}

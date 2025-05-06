@@ -29,14 +29,10 @@ def connect_database(db_file):
 
 @app.route('/')
 def render_homepage():
-    return render_template('Home.html')
+    return render_template('Home.html', logged_in=session.get('logged_in'), admin=session.get('admin'))
 
 
-def user_profile_display():
-    username = session.get("username")
-    email = session.get("email")
-    admin = session.get("admin")
-    return (username, email, admin)
+
 
 @app.route('/logout')
 def logout():
@@ -50,7 +46,25 @@ def logout():
 
 @app.route('/Session', methods=['POST', 'GET'])
 def render_Sessionpage():
-    user, email, admin = user_profile_display()
+
+
+    con = connect_database(DATABASE)
+    check_query = "SELECT session_id, filament, size, file_name FROM session WHERE fk_user_id = ?"
+    cur = con.cursor()
+    cur.execute(check_query, (session.get('user_id'),))
+    sessions = cur.fetchall()
+    cur.close()
+
+    if request.method == 'POST':
+        session_id = request.form['session_id']
+        con = connect_database(DATABASE)
+        cur = con.cursor()
+        cur.execute("DELETE FROM session WHERE session_id = ?", (session_id,))
+        con.commit()
+        cur.close()
+
+
+
     if request.method == 'POST':
         #grabs submitted information from the html
 
@@ -76,7 +90,9 @@ def render_Sessionpage():
         con.commit()
         con.close()
 
-    return render_template('Session.html', user = user, email = email, admin = admin)
+
+
+    return render_template('Session.html', user = session.get('username'), email = session.get('email'), admin=session.get('admin'), sessions=sessions)
 
 
 def check_admin(email):
@@ -101,7 +117,7 @@ def find_account(email):
 
 @app.route('/Login', methods=['POST', 'GET'])
 def render_loginpage():
-    user, email, is_admin = user_profile_display()
+
     if request.method == 'POST':
         #grabs information submitted
         Name = request.form.get('Name')
@@ -149,11 +165,10 @@ def render_loginpage():
 
         return redirect("/")
 
-    return render_template('Login.html', user = user, email = email, admin=is_admin, logged_in=session.get('logged_in'))
+    return render_template('Login.html', user = session.get('username'), email = session.get('email'), admin=session.get('admin'), logged_in=session.get('logged_in'))
 
 @app.route('/Signin', methods=['POST', 'GET'])
 def render_signinpage():
-    user, email_display, is_admin = user_profile_display()
     if request.method == 'POST':
         #gets information submitted
         Name = request.form.get('Name')
@@ -199,7 +214,7 @@ def render_signinpage():
         con.commit()
         con.close()
         return redirect("/Login")
-    return render_template('signin.html', user = user, email = email_display, admin=is_admin, logged_in=session.get('logged_in'))
+    return render_template('signin.html', user = session.get('username'), email = session.get('email'), admin=session.get('admin'), logged_in=session.get('logged_in'))
 
 @app.route('/Admin', methods=['POST', 'GET'])
 def render_Adminpage():
@@ -210,6 +225,7 @@ def render_Adminpage():
     cur.execute(query)
     sessions = cur.fetchall()
     cur.close()
+
     if request.method == 'POST':
         session_id = request.form['session_id']
         con = connect_database(DATABASE)
@@ -217,8 +233,9 @@ def render_Adminpage():
         cur.execute("DELETE FROM session WHERE session_id = ?", (session_id,))
         con.commit()
         cur.close()
+        return render_template('Admin.html', user = session.get('username'), email = session.get('email'), sessions=sessions, logged_in=session.get('logged_in'))
 
-    return render_template('Admin.html', sessions=sessions, logged_in=session.get('logged_in'))
+    return render_template('Admin.html', user = session.get('username'), email = session.get('email'), sessions=sessions, logged_in=session.get('logged_in'))
 
 if __name__ == '__main__':
     app.run()

@@ -70,9 +70,6 @@ def render_Sessionpage():
     return render_template('Session.html', user = user, email = email, admin = admin)
 
 
-
-
-
 def check_admin(email):
     check_query = "SELECT Admin FROM users WHERE email = ?"
     con = connect_database(DATABASE)
@@ -194,15 +191,22 @@ def render_signinpage():
         return redirect("/Login")
     return render_template('signin.html', user = user, email = email_display, admin=is_admin)
 
-@app.route('/Admin',)
+@app.route('/Admin', methods=['POST', 'GET'])
 def render_Adminpage():
 
     con = connect_database(DATABASE)
     cur = con.cursor()
-    query = "SELECT users.username, users.address, users.email, session.filament, session.size, session.file_name FROM session JOIN users ON session.fk_user_id = users.user_id"
+    query = "SELECT session.session_id, users.username, users.address, users.email, session.filament, session.size, session.file_name FROM session JOIN users ON session.fk_user_id = users.user_id"
     cur.execute(query)
     sessions = cur.fetchall()
     cur.close()
+    if request.method == 'POST':
+        session_id = request.form['session_id']
+        con = connect_database(DATABASE)
+        cur = con.cursor()
+        cur.execute("DELETE FROM session WHERE session_id = ?", (session_id,))
+        con.commit()
+        cur.close()
 
     return render_template('Admin.html', sessions=sessions)
 

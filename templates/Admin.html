@@ -15,13 +15,17 @@
                     </tr>
                     {% for session in sessions %}
                         <tr>
-                            <td>{{ session[0] }}</td>  <!-- filament -->
-                            <td>{{ session[1] }}</td>  <!-- size -->
-                            <td>{{ session[2] }}</td>  <!-- file_name -->
+                            <td>{{ session[1] }}</td>
+                            <td>{{ session[2] }}</td>
                             <td>{{ session[3] }}</td>
                             <td>{{ session[4] }}</td>
                             <td>{{ session[5] }}</td>
-                            <!-- username -->
+                            <td>{{ session[6] }}</td>
+                            <td>
+                               <form class="myform" method="post">
+                                   <input type="hidden" name="session_id" value="{{ session[0] }}">
+                                   <input type="submit" value= "Delete">
+                            </td>
                         </tr>
                     {% endfor %}
                 </table>

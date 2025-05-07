@@ -38,6 +38,7 @@ def logout():
     session.pop('username', None)
     session.pop('email', None)
     session.pop('admin', None)
+    session.pop('address', None)
     session['logged_in'] = False
 
     return redirect("/")
@@ -56,7 +57,6 @@ def render_Sessionviewpage():
     cur.execute(check_query, (session.get('user_id'),))
     sessions = cur.fetchall()
     cur.close()
-
     if request.method == 'POST':
         session_id = request.form['session_id']
         con = connect_database(DATABASE)
@@ -65,7 +65,7 @@ def render_Sessionviewpage():
         con.commit()
         cur.close()
 
-    return render_template('Session_view.html', user = session.get('username'), email = session.get('email'), admin=session.get('admin'), session=sessions, logged_in = session.get('logged_in'))
+    return render_template('Session_view.html', user = session.get('username'), email = session.get('email'), admin=session.get('admin'), sessions=sessions, logged_in = session.get('logged_in'))
 
 
 
@@ -102,9 +102,6 @@ def render_Sessionpage():
         cur.execute(query_insert, (Filament, Size, file_data, Model.filename, user_id))
         con.commit()
         con.close()
-
-
-
     return render_template('Session.html', user = session.get('username'), email = session.get('email'), admin=session.get('admin'), logged_in = session.get('logged_in'))
 
 
@@ -120,7 +117,7 @@ def check_admin(email):
 
 
 def find_account(email):
-    check_query = "SELECT user_id, username, password , email FROM users WHERE email = ?"
+    check_query = "SELECT user_id, username, password , email, address FROM users WHERE email = ?"
     con = connect_database(DATABASE)
     cur = con.cursor()
     cur.execute(check_query, (email,))
@@ -155,6 +152,7 @@ def render_loginpage():
             user_id = user_info[0]
             username = user_info[1]
             user_password = user_info[2]
+            address = user_info[4]
 
             #error activates if try cannot get information from user id indicating the gmail wasn't found
         except TypeError:
@@ -173,6 +171,7 @@ def render_loginpage():
             return render_template('Login.html', error="passwords do not match")
         # holds the user information in the website while user is logged in
         session['email'] = email
+        session['address'] = address
         session['user_id'] = user_id
         session['username'] = username
         session['logged_in'] = True
@@ -273,34 +272,75 @@ def render_Adminpage():
     return render_template('Admin.html', user = session.get('username'), email = session.get('email'), sessions=sessions, logged_in=session.get('logged_in'))
 
 
+
+
+
+
+
+
+def check_gmail():
+    check_query = "SELECT email FROM users WHERE username != ? "
+    con = connect_database(DATABASE)
+    cur = con.cursor()
+    cur.execute(check_query,(session.get('username'),))
+    email = cur.fetchall()
+    cur.close()
+    return email
+
+
+def check_username():
+    check_query = "SELECT username FROM users WHERE email != ? "
+    con = connect_database(DATABASE)
+    cur = con.cursor()
+    cur.execute(check_query, (session.get('email'),))
+    username = cur.fetchall()
+    cur.close()
+    return username
+
 @app.route('/Settings', methods=['POST', 'GET'])
 def render_Settingspage():
     if request.method == 'POST':
-        C_username = request.form.get('Change_username')
-        C_Email = request.form.get('Change_Email')
-        C_address = request.form.get('Change_address')
+        C_username = request.form.get('username')
+        C_Email = request.form.get('Email')
+        C_address = request.form.get('address')
+
+        user_name_account = check_username()
+        username_list = []
+        for x in user_name_account:
+            username_list.append(x[0])
+        if C_username in username_list:
+            return render_template('Settings.html',error = "username already in use", address = session.get('address'), user = session.get('username'), email = session.get('email'),  logged_in=session.get('logged_in'), admin=session.get('admin'))
+
+        gmail_account = check_gmail()
+        email_list = []
+        for x in gmail_account:
+            email_list.append(x[0])
+        if C_Email in email_list:
+            return render_template('Settings.html', error="email already in use", address=session.get('address'),user=session.get('username'), email=session.get('email'),logged_in=session.get('logged_in'), admin=session.get('admin'))
+
 
         con = connect_database(DATABASE)
         cur = con.cursor()
         if C_username:
             cur.execute("UPDATE users SET username = ? WHERE user_id = ?", (C_username, session['user_id']))
-        else:
-            return render_template('settings.html', error="username cant be null" , user=session.get('username'), email=session.get('email'),logged_in=session.get('logged_in'))
 
         if C_Email:
             cur.execute("UPDATE users SET email = ? WHERE user_id = ?", (C_Email, session['user_id']))
-        else:
-            return render_template('settings.html', error="Email cant be null" , user=session.get('username'), email=session.get('email'),logged_in=session.get('logged_in'))
+
         if C_address:
             cur.execute("UPDATE users SET address = ? WHERE user_id = ?", (C_address, session['user_id']))
-        else:
-            return render_template('settings.html', error="Address cant be null" , user=session.get('username'), email=session.get('email'),logged_in=session.get('logged_in'))
+
         con.commit()
         cur.close()
 
+        session['email'] = C_Email
+        session['address'] = C_address
+        session['username'] = C_username
 
 
-    return render_template('settings.html', user = session.get('username'), email = session.get('email'),  logged_in=session.get('logged_in'), admin=session.get('admin'))
+
+
+    return render_template('Settings.html', address = session.get('address'), user = session.get('username'), email = session.get('email'),  logged_in=session.get('logged_in'), admin=session.get('admin'))
 
 
 if __name__ == '__main__':

@@ -2,30 +2,22 @@
 
 {% block main %}
 
-       <form class="myform" method="post">
-            <div class="form-label"> Change Username </div>
-            <div class="form-element">
-                <input type="text" name="Change_username">
-            </div>
-            <input type="submit" name="submit_type" value="Change Username">
-        </form>
+    <body>
+        <form  ="myform" method="post">
+            <div class="sessionbox">
+                <div class="form-label"> Name </div>
+                <div class="form-element"> <input type="text" name="username" value="{{ user }}" required></div>
 
-        <form class="myform" method="post">
-            <div class="form-label"> Change Email </div>
-            <div class="form-element">
-                <input type="text" name="Change_Email">
-            </div>
-            <input type="submit" name="submit_type" value="Change Email">
-        </form>
+                <div class="form-label"> Email </div>
+                <div class="form-element"> <input type="email" name="Email" value="{{ email }}" required ></div>
 
-        <form class="myform" method="post">
-            <div class="form-label"> Change Address </div>
-            <div class="form-element">
-                <input type="text" name="Change_address">
-            </div>
-            <input type="submit" name="submit_type" value="Change Address">
-        </form>
-        {{ error }}
+                <div class="form-label"> Address </div>
+                <div class="form-element"> <input type="text" name="address" value="{{ address }}" required></div>
+
+                <input type="submit" value= "Submit">
+
+                {{ error }}
+    </body>
 
 
 {% endblock %}

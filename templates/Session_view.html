@@ -1,0 +1,32 @@
+
+{% extends "Base.html" %}
+
+{% block main %}
+    <body>
+            <h1>Session Table</h1>
+                <table>
+                    <tr>
+                        <th>filament</th>
+                        <th>size</th>
+                        <th>file_name </th>
+
+                    </tr>
+                    {% for session in sessions %}
+                        <tr>
+                            <td>{{ session[1] }}</td>
+                            <td>{{ session[2] }}</td>
+                            <td>{{ session[3] }}</td>
+
+                            <td>
+                               <form class="myform" method="post">
+                                   <input type="hidden" name="session_id" value="{{ session[0] }}">
+                                   <input type="submit" value= "Delete">
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+    </body>
+
+
+
+{% endblock %}

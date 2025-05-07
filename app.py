@@ -12,8 +12,6 @@ DATABASE = 'database'
 
 
 
-
-
 def connect_database(db_file):
     """
     Connects to the database and sends error message if database cannot be connected for some reason
@@ -31,11 +29,9 @@ def connect_database(db_file):
 
 @app.route('/')
 def render_homepage():
+    if session.get('logged_in') == None:
+        session['logged_in'] = False
     return render_template('Home.html', logged_in=session.get('logged_in'), admin=session.get('admin'))
-
-
-
-
 @app.route('/logout')
 def logout():
     session.pop('user_id', None)
@@ -46,10 +42,14 @@ def logout():
 
     return redirect("/")
 
-@app.route('/Session', methods=['POST', 'GET'])
-def render_Sessionpage():
 
 
+
+
+
+
+@app.route('/Session_view', methods=['POST', 'GET'])
+def render_Sessionviewpage():
     con = connect_database(DATABASE)
     check_query = "SELECT session_id, filament, size, file_name FROM session WHERE fk_user_id = ?"
     cur = con.cursor()
@@ -65,7 +65,18 @@ def render_Sessionpage():
         con.commit()
         cur.close()
 
+    return render_template('Session_view.html', user = session.get('username'), email = session.get('email'), admin=session.get('admin'), session=sessions, logged_in = session.get('logged_in'))
 
+
+
+
+
+
+
+
+
+@app.route('/Session', methods=['POST', 'GET'])
+def render_Sessionpage():
 
     if request.method == 'POST':
         #grabs submitted information from the html
@@ -94,7 +105,7 @@ def render_Sessionpage():
 
 
 
-    return render_template('Session.html', user = session.get('username'), email = session.get('email'), admin=session.get('admin'), sessions=sessions, logged_in = session.get('logged_in'))
+    return render_template('Session.html', user = session.get('username'), email = session.get('email'), admin=session.get('admin'), logged_in = session.get('logged_in'))
 
 
 def check_admin(email):
@@ -116,6 +127,15 @@ def find_account(email):
     user_info = cur.fetchone()
     cur.close()
     return user_info
+
+
+
+
+
+
+
+
+
 
 @app.route('/Login', methods=['POST', 'GET'])
 def render_loginpage():
@@ -166,8 +186,17 @@ def render_loginpage():
             session['admin'] = False
 
         return redirect("/")
-
+        print(session)
     return render_template('Login.html', user = session.get('username'), email = session.get('email'), admin=session.get('admin'), logged_in=session.get('logged_in'))
+
+
+
+
+
+
+
+
+
 
 @app.route('/Signin', methods=['POST', 'GET'])
 def render_signinpage():
@@ -188,19 +217,14 @@ def render_signinpage():
         username_list = []
         for x in user_name_account:
             username_list.append(x[0])
-
         if Name in username_list:
             return render_template('signin.html', error="username already in use")
-
         user_info = find_account(Email)
         try:
             if user_info[3] == Email:
                 return render_template('Login.html', error="Email address already in use", link="/signin")
         except TypeError:
             pass
-
-
-
         #converts password submitted into bcrypt layout for better security purposes
         hashed_password = bcrypt.generate_password_hash(password)
         #checks if password is 8 digits long and re password matches password
@@ -217,6 +241,15 @@ def render_signinpage():
         con.close()
         return redirect("/Login")
     return render_template('signin.html', user = session.get('username'), email = session.get('email'), admin=session.get('admin'), logged_in=session.get('logged_in'))
+
+
+
+
+
+
+
+
+
 
 @app.route('/Admin', methods=['POST', 'GET'])
 def render_Adminpage():
@@ -267,7 +300,7 @@ def render_Settingspage():
 
 
 
-    return render_template('settings.html', user = session.get('username'), email = session.get('email'),  logged_in=session.get('logged_in'))
+    return render_template('settings.html', user = session.get('username'), email = session.get('email'),  logged_in=session.get('logged_in'), admin=session.get('admin'))
 
 
 if __name__ == '__main__':

@@ -1,0 +1,31 @@
+{% extends "Base.html" %}
+
+{% block main %}
+
+       <form class="myform" method="post">
+            <div class="form-label"> Change Username </div>
+            <div class="form-element">
+                <input type="text" name="Change_username">
+            </div>
+            <input type="submit" name="submit_type" value="Change Username">
+        </form>
+
+        <form class="myform" method="post">
+            <div class="form-label"> Change Email </div>
+            <div class="form-element">
+                <input type="text" name="Change_Email">
+            </div>
+            <input type="submit" name="submit_type" value="Change Email">
+        </form>
+
+        <form class="myform" method="post">
+            <div class="form-label"> Change Address </div>
+            <div class="form-element">
+                <input type="text" name="Change_address">
+            </div>
+            <input type="submit" name="submit_type" value="Change Address">
+        </form>
+        {{ error }}
+
+
+{% endblock %}

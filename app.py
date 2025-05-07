@@ -12,6 +12,8 @@ DATABASE = 'database'
 
 
 
+
+
 def connect_database(db_file):
     """
     Connects to the database and sends error message if database cannot be connected for some reason
@@ -92,7 +94,7 @@ def render_Sessionpage():
 
 
 
-    return render_template('Session.html', user = session.get('username'), email = session.get('email'), admin=session.get('admin'), sessions=sessions)
+    return render_template('Session.html', user = session.get('username'), email = session.get('email'), admin=session.get('admin'), sessions=sessions, logged_in = session.get('logged_in'))
 
 
 def check_admin(email):
@@ -236,6 +238,37 @@ def render_Adminpage():
         return render_template('Admin.html', user = session.get('username'), email = session.get('email'), sessions=sessions, logged_in=session.get('logged_in'))
 
     return render_template('Admin.html', user = session.get('username'), email = session.get('email'), sessions=sessions, logged_in=session.get('logged_in'))
+
+
+@app.route('/Settings', methods=['POST', 'GET'])
+def render_Settingspage():
+    if request.method == 'POST':
+        C_username = request.form.get('Change_username')
+        C_Email = request.form.get('Change_Email')
+        C_address = request.form.get('Change_address')
+
+        con = connect_database(DATABASE)
+        cur = con.cursor()
+        if C_username:
+            cur.execute("UPDATE users SET username = ? WHERE user_id = ?", (C_username, session['user_id']))
+        else:
+            return render_template('settings.html', error="username cant be null" , user=session.get('username'), email=session.get('email'),logged_in=session.get('logged_in'))
+
+        if C_Email:
+            cur.execute("UPDATE users SET email = ? WHERE user_id = ?", (C_Email, session['user_id']))
+        else:
+            return render_template('settings.html', error="Email cant be null" , user=session.get('username'), email=session.get('email'),logged_in=session.get('logged_in'))
+        if C_address:
+            cur.execute("UPDATE users SET address = ? WHERE user_id = ?", (C_address, session['user_id']))
+        else:
+            return render_template('settings.html', error="Address cant be null" , user=session.get('username'), email=session.get('email'),logged_in=session.get('logged_in'))
+        con.commit()
+        cur.close()
+
+
+
+    return render_template('settings.html', user = session.get('username'), email = session.get('email'),  logged_in=session.get('logged_in'))
+
 
 if __name__ == '__main__':
     app.run()

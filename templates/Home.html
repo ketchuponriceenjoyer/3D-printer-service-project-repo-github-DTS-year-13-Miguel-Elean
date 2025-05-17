@@ -1,39 +1,68 @@
 <!DOCTYPE html>
+<html>
 <head>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.css"/>
-        <link href="{{ url_for('static', filename='HomeCss.css') }}" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.css"/>
+  <link href="{{ url_for('static', filename='HomeCss.css') }}" rel="stylesheet" />
 </head>
-<html lang="en">
 
-    <head>
-        <title>testing</title>
-    </head>
-
-
-    <body>
-
+<body>
+    <div class="page-wrapper">
         <nav>
-            <div>
-                <p> HOME PAGE</p>
-            </div>
+            <div class="content-container">
 
+                    <div>
+                    <p> HOME PAGE</p>
+                    </div>
+                    <div class="navbar-links">
+                        {% if logged_in == True %}
+                            <a href="/Session" class="button">Sessions</a>
+                        {% endif %}
 
-            <div class="navbar-links">
-                {% if logged_in == True %}
-                    <a href="/Session">Sessions</a>
-                {% endif %}
-                {% if admin == True %}
-                        <a href="/Admin">Admin</a>
-                    {% endif %}
-                {% if logged_in == False %}
-                    <a href="/Login">Login</a>
-                    <a href="/Signin">Sign in</a>
-                {% endif %}
-
-
+                        {% if admin == True %}
+                            <a href="/Admin" class="button">Admin</a>
+                        {% endif %}
+                        {% if logged_in == False %}
+                            <a href="/Login" class="button">Login</a>
+                            <a href="/Signin" class="button">Sign in</a>
+                        {% endif %}
+                    </div>
 
             </div>
         </nav>
-    </body>
 
+        <div class="slideshow-container">
+
+          <div class="mySlides fade">
+            <div class="a" style="background-image: url('/static/Image_slides/IMAGE_1.png'); "></div>
+          </div>
+
+          <div class="mySlides fade">
+            <div class="a" style="background-image: url('/static/Image_slides/IMAGE_2.png');"></div>
+          </div>
+
+          <div class="mySlides fade">
+            <div class="a" style="background-image: url('/static/Image_slides/IMAGE_3');"></div>
+          </div>
+
+        </div>
+    </div>
+
+      <script>
+        let slideIndex = 0;
+        showSlides();
+
+        function showSlides() {
+          let i;
+          let slides = document.getElementsByClassName("mySlides");
+          for (i = 0; i < slides.length; i++) {
+            slides[i].style.display = "none";
+          }
+          slideIndex++;
+          if (slideIndex > slides.length) {slideIndex = 1}
+          slides[slideIndex-1].style.display = "block";
+          setTimeout(showSlides, 5000);
+        }
+      </script>
+</body>
 </html>

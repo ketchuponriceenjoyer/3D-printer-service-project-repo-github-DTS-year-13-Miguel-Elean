@@ -9,39 +9,47 @@
 
     <body>
         <nav>
-            <div class="b">
-                <div> username: {{ user }}</div>
-                <div> email: {{ email }}</div>
-                <a href="/logout">logout</a>
-            </div>
-
             <div>
-                <p>Session Page</p>
+                <p></p>
             </div>
-
+            <br>
             <div class="navbar-links">
                 {% if logged_in == True %}
-                    <a href="/Session">Sessions</a>
-                    <a href="/Settings">Settings</a>
-                    <a href="/Session_view">Session View</a>
+                    <a href="/Session" class="button">Sessions</a>
+                    <a href="/Settings" class="button">Settings</a>
+                    <a href="/Session_view" class="button">Session View</a>
                 {% endif %}
 
                 {% if logged_in == False %}
-                    <a href="/Login">Login</a>
-                    <a href="/Signin">Sign in</a>
+                    <a href="/Login" class="button">Login</a>
+                    <a href="/Signin" class="button">Sign in</a>
                 {% endif %}
 
-                <a href="/">Home</a>
+                <a href="/" class="button">Home</a>
 
                 {% if admin == True %}
-                    <a href="/Admin">Admin</a>
+                    <a href="/Admin" class="button">Admin</a>
                 {% endif %}
             </div>
+
+
+
+                {% if logged_in == True %}
+                    <div class="profile-container" >
+                        <div> {{ user }} </div>
+                        <div> {{ email }} </div>
+                        <br>
+                        <a href="/logout" class="button">logout</a>
+                    </div>
+                {% endif %}
+
         </nav>
 
-        <main>
+        <main class="content-container">
             {% block main %}
             {% endblock %}
         </main>
+
+
     </body>
 </html>
